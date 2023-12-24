@@ -27,6 +27,7 @@ async function searchRecipes(query) {
     throw error;
   }
 }
+
 async function getRecipeById(id) {
   try {
     var recipe = await recipeDB.findOne({ _id: id });
@@ -86,6 +87,7 @@ async function fetchUserData(email) {
   let user = await userDB.findOne({ email: email });
   return user;
 }
+
 async function addToFavorites(data) {
   let result = await userDB.findOneAndUpdate(
     { email: data.email },
@@ -94,6 +96,32 @@ async function addToFavorites(data) {
   );
   return result ? "success" : "failed";
 }
+
+async function removeFromFavorites(data) {
+  try {
+    const user = await userDB.findOne({ email: data.email });
+
+    if (user) {
+      // Manipulate the 'favorite' array in your application code
+      user.favorite = user.favorite.filter(item => item.id !== data.id);
+
+      // Save the changes
+      await user.save();
+      // console.log('Document updated successfully.');
+      return "success";
+    } else {
+      // console.log('No document found matching the criteria.');
+      return "failed";
+    }
+  } catch (error) {
+    console.error('Error updating document:', error);
+    throw new Error('Failed to update document');
+  }
+}
+
+
+
+
 async function addToMyrecipes(email, recipe) {
   let recipesDb = await recipeDB.create(recipe);
 
@@ -114,4 +142,5 @@ module.exports = {
   addToFavorites,
   addToMyrecipes,
   getRecipeById,
+  removeFromFavorites
 };

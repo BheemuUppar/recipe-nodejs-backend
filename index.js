@@ -156,6 +156,18 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({status : result}));
     });
   }
+  else if(req.url === "/user/removeFromFavorite" && req.method === "POST"){
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+
+    req.on("end", async () => {
+      const obj = JSON.parse(body);
+      let result = await utils.removeFromFavorites(obj);
+      res.end(JSON.stringify({status : result}));
+    });
+  }
   else if(req.url === "/user/myRecipe" && req.method === "POST"){
     let body = "";
     req.on("data", (chunk) => {
